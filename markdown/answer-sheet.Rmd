@@ -163,5 +163,5 @@ new_credit <- tibble()
 
 ```
 
-Bagaimanakan hasilnya?
+Bagaimanakah hasilnya?
 
