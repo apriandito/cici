@@ -1,0 +1,112 @@
+---
+title: "Studi Kasus: Cici"
+author: "Muhammad Apriandito"
+---
+
+# Setup
+
+```{r}
+# Install Packages
+
+```
+
+```{r}
+# Load Packages
+library(readxl)
+library(tidyverse)
+library(tidymodels)
+library(skimr)
+library(themis)
+```
+
+# Load data
+
+```{r}
+# Load data
+df <- read_xlsx("data/cici.xlsx")
+```
+
+```{r}
+# Lihat data
+head(df)
+```
+
+```{r}
+# Lihat data menggunakan glimpse
+glimpse(df)
+```
+
+# EDA
+
+```{r}
+# Melihat nilai kosong
+skim(df)
+```
+
+```{r}
+# Melihat distribusi resiko kredit
+
+```
+
+```{r}
+# Eksplore lebih dalam!
+
+```
+
+
+# Membuat Model Machine Learning
+
+## Split Data
+
+```{r}
+# Split data
+df_split <- initial_split(df, prop = 0.7)
+df_split
+```
+
+```{r}
+# Lihat data training
+df_split %>%
+  training() 
+```
+
+```{r}
+# Lihat data testing
+df_split %>%
+  training() 
+```
+
+## Membuat alur pemrosesan data
+
+```{r}
+# Membuat Recipe
+df_recipe <- training(df_split) %>%
+  recipe(y ~.) %>%
+  step_downsample(y) %>%
+  prep()
+df_recipe
+```
+
+```{r}
+# Mererapkan ke data training 
+df_training <- juice(df_recipe)
+glimpse(df_training)
+```
+
+```{r}
+
+```
+
+
+
+## Memabuat Model Machine Learning
+
+```{r}
+# Set Model
+
+```
+
+```{r}
+
+```
+
