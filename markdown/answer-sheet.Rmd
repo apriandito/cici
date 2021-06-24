@@ -4,63 +4,69 @@ author: "Muhammad Apriandito"
 ---
 
 # Setup
-
 ```{r}
 # Install Packages
-
+install.packages(c("tidyverse",
+                   "tidymodels",
+                   "skumr", 
+                   "themis", 
+                   "randomForest"))
 ```
 
 ```{r}
 # Load Packages
+library(____)
+library(____)
+library(____)
+library(____)
 library(readxl)
-library(tidyverse)
-library(tidymodels)
-library(skimr)
-library(themis)
 ```
 
 # Load data
-
 ```{r}
 # Load data
-df <- read_xlsx("data/cici.xlsx")
+df <- read_xlsx("____")
 ```
 
 ```{r}
 # Lihat data
-head(df)
+head(____)
 ```
 
 ```{r}
 # Lihat data menggunakan glimpse
-glimpse(df)
+glimpse(____)
 ```
 
-# EDA
+# Exploratory Data Analysis
 
 ```{r}
-# Melihat nilai kosong
-skim(df)
+# Melihat rangkuman data dengan skim
+skim(____)
 ```
 
 ```{r}
 # Melihat distribusi resiko kredit
-
+df %>%
+  select(____) %>%
+  group_by(____) %>%
+  count() %>%
+  ggplot(aes(x = ____, y = n, fill = ____)) +
+  geom_col()
 ```
 
 ```{r}
-# Eksplore lebih dalam!
+# Silahkan eksplore lebih dalam!
 
 ```
-
 
 # Membuat Model Machine Learning
 
 ## Split Data
 
 ```{r}
-# Split data
-df_split <- initial_split(df, prop = 0.7)
+# Split data dengan proporsi 70:30
+df_split <- initial_split(____, prop = ____)
 df_split
 ```
 
@@ -79,34 +85,83 @@ df_split %>%
 ## Membuat alur pemrosesan data
 
 ```{r}
-# Membuat Recipe
+# Membuat alur pemrosesan data
 df_recipe <- training(df_split) %>%
-  recipe(y ~.) %>%
-  step_downsample(y) %>%
+  recipe(____ ~ ____) %>%
+  step_downsample(____) %>%
   prep()
 df_recipe
 ```
 
 ```{r}
 # Mererapkan ke data training 
-df_training <- juice(df_recipe)
-glimpse(df_training)
+df_training <- juice(____)
+df_training
 ```
 
 ```{r}
-
+# Menerapkan ke data testing
+df_testing <- ____ %>%
+    bake(testing(____)) 
+df_testing
 ```
-
 
 
 ## Memabuat Model Machine Learning
 
 ```{r}
-# Set Model
-
+# Menset Algoritma Random Forest
+rf <-  ____
 ```
 
 ```{r}
+# Membuat Workflow
+workflow <- workflow() %>%
+    add_model(____) %>%
+    add_recipe(____)
+```
+
+```{r}
+# Training Model
+model <- fit(____, training(df_split))
+```
+
+## Testing
+
+```{r}
+# Melakukan prediksi ke data testing
+____ %>%
+  predict(testing(df_split)) %>%
+  bind_cols(testing(df_split)) %>%
+  head()
+```
+
+```{r}
+# Menentukan metrik untuk evaluasi
+multi_metrics <- metric_set(accuracy,
+                            sensitivity,
+                            specificity, 
+                            recall, 
+                            f_meas)
+
+# Mengukur peforma model
+model %>%
+    predict(df_testing) %>%
+    bind_cols(df_testing) %>%
+    multi_metrics(truth = ____, estimate = .pred_class)
+```
+
+# Melakukan prediksi ke pengajuan kredit baru
+
+```{r}
+# Membuat data pengajuan kredit baru
+new_credit <- tibble()
+```
+
+```{r}
+# Melakukan prediksi
 
 ```
+
+Bagaimanakan hasilnya?
 
