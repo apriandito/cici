@@ -1,0 +1,182 @@
+---
+title: "Studi Kasus: Cici"
+author: "Muhammad Apriandito"
+---
+
+# Setup
+```{r}
+# Install Packages
+install.packages(c("tidyverse",
+                   "tidymodels",
+                   "skumr", 
+                   "themis", 
+                   "randomForest"))
+```
+
+```{r}
+# Load Packages
+library(tidyverse)
+library(tidymodels)
+library(skimr)
+library(themis)
+library(readxl)
+```
+
+# Load data
+```{r}
+# Load data
+df <- read_xlsx("data/cici.xlsx")
+```
+
+```{r}
+# Lihat data
+head(df)
+```
+
+```{r}
+# Lihat data menggunakan glimpse
+glimpse(df)
+```
+
+# Exploratory Data Analysis
+
+```{r}
+# Melihat rangkuman data dengan skim
+skim(df)
+```
+
+```{r}
+# Melihat distribusi resiko kredit
+df %>%
+  select(risiko) %>%
+  group_by(risiko) %>%
+  count() %>%
+  ggplot(aes(x = risiko, y = n, fill = risiko)) +
+  geom_col()
+```
+
+```{r}
+# Silahkan eksplore lebih dalam!
+
+```
+
+# Membuat Model Machine Learning
+
+## Split Data
+
+```{r}
+# Split data dengan proporsi 70:30
+df_split <- initial_split(df, prop = 0.75)
+df_split
+```
+
+```{r}
+# Lihat data training
+df_split %>%
+  training() 
+```
+
+```{r}
+# Lihat data testing
+df_split %>%
+  training() 
+```
+
+## Membuat alur pemrosesan data
+
+```{r}
+# Membuat alur pemrosesan data
+df_recipe <- training(df_split) %>%
+  recipe(risiko ~ . ) %>%
+  step_downsample(risiko) %>%
+  prep()
+df_recipe
+```
+
+```{r}
+# Mererapkan ke data training 
+df_training <- juice(df_recipe)
+df_training
+```
+
+```{r}
+# Menerapkan ke data testing
+df_testing <- df_recipe %>%
+    bake(testing(df_split)) 
+df_testing
+```
+
+
+## Membuat Model Machine Learning
+
+```{r}
+# Menset Algoritma Random Forest
+rf <-  rand_forest(mode = "classification") %>%
+    set_engine("randomForest")
+```
+
+```{r}
+# Membuat Workflow
+workflow <- workflow() %>%
+    add_model(rf) %>%
+    add_recipe(df_recipe)
+```
+
+```{r}
+# Training Model
+model <- fit(workflow, training(df_split))
+```
+
+## Testing
+
+```{r}
+# Melakukan prediksi ke data testing
+model %>%
+  predict(testing(df_split)) %>%
+  bind_cols(testing(df_split)) %>%
+  head()
+```
+
+```{r}
+# Menentukan metrik untuk evaluasi
+multi_metrics <- metric_set(accuracy,
+                            sensitivity,
+                            specificity, 
+                            recall, 
+                            f_meas)
+
+# Mengukur peforma model
+model %>%
+    predict(df_testing) %>%
+    bind_cols(df_testing) %>%
+    multi_metrics(truth = risiko, estimate = .pred_class)
+```
+
+# Melakukan prediksi ke pengajuan kredit baru
+
+```{r}
+# Membuat data pengajuan kredit baru
+new_credit <- tibble(usia = 66, 
+               jenis_kelamin = "laki-laki",
+               pekerjaan = "Wiraswasta",
+               kepemilikan_rumah = "Milik Sendiri",
+               jumlah_tabungan = "Sedikit", 
+               jumlah_pengajuan_kredit = 1908,
+               durasi = 30, 
+               tujuan = "Bisnis")
+```
+
+```{r}
+# Melakukan prediksi
+model %>%
+    predict(new_credit)
+```
+Bagaimanakan hasilnya?
+
+```{r}
+# Simpan Model
+write_rds(model, "model/model.rds")
+```
+
+
+
