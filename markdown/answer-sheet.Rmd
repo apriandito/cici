@@ -155,7 +155,14 @@ model %>%
 
 ```{r}
 # Membuat data pengajuan kredit baru
-new_credit <- tibble()
+new_credit <- tibble(usia = 66, 
+               jenis_kelamin = "laki-laki",
+               pekerjaan = "Wiraswasta",
+               kepemilikan_rumah = "Milik Sendiri",
+               jumlah_tabungan = "Sedikit", 
+               jumlah_pengajuan_kredit = 1908,
+               durasi = 30, 
+               tujuan = "Bisnis")
 ```
 
 ```{r}
